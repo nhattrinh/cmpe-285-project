@@ -1,0 +1,53 @@
+# Ignore Python cache files and directories
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.ipynb_checkpoints
+
+# Ignore virtual environment directories
+venv/
+env/
+.venv/
+
+# Ignore development files
+*.log
+*.sqlite3
+*.db
+.DS_Store
+*.swp
+*.swo
+
+# Ignore test and debugging files
+tests/
+coverage/
+htmlcov/
+*.cover
+*.pytest_cache/
+.cache/
+
+# Ignore Git files
+.git/
+.gitignore
+.gitattributes
+
+# Ignore Docker-related files (optional, except for Dockerfile)
+docker-compose.yml
+docker-compose.override.yml
+
+# Ignore environment variable files
+.env
+.env.*
+
+# Ignore other unnecessary files
+node_modules/
+dist/
+build/
+__pycache__/
+*.tmp
+*.bak
+*.old
+
+# Ignore IDE/project configuration files
+*.idea/
+.vscode/

@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  api-gateway:
+    build: ./backend
+    ports:
+      - "5001:5000"
+    environment:
+      POLYGON_SERVICE_URL: http://polygon-microservice:8000
