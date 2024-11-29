@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from .routes.route import api_router
+from .routes.authentication import authentication
 # from .config import Settings  
 
 
@@ -18,6 +19,7 @@ class CreateApp:
  
         print("Router is being connected")
         self.app.include_router(api_router, prefix="/api")
+        self.app.include_router(authentication, prefix="/api/users")
 
     def get_app(self):
         """
