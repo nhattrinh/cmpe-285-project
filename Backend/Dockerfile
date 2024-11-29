@@ -23,4 +23,4 @@ COPY . .
 EXPOSE 5000
 
 # Start the FastAPI app with Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5001"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
