@@ -1,7 +1,10 @@
 from fastapi import APIRouter, HTTPException
 import requests
-# from app.config import Config
 
+
+
+# This is going to serve as the authentication section of the application
+# This is where user_UD
 authentication = APIRouter()
 
 
