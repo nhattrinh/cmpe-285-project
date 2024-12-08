@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-import { BACKEND_URL } from '../constants';
+const BACKEND_URL = "placeholder";
 
 const Register = () => {
   const navigate = useNavigate();

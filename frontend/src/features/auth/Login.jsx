@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-import AuthContext from './AuthContext';
+import AuthContext from './AuthContext'
 import { BACKEND_URL } from '../constants';
 
 const Login = () => {

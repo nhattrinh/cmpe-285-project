@@ -3,10 +3,10 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import {
-  Register, Login, Layout,
-  Logout, AuthProvider,
-} from '../auth/index.js';
+import Layout from '../layout';
+import Home from '../home';
+import AddStrategy from '../strategies/add';
+import ViewStrategy from '../strategies/view';
 
 const theme = createTheme({
   palette: {
@@ -22,17 +22,19 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Home />,
-      },{
-        path: '/register',
-        element: <Register />,
       },
       {
-        path: '/login',
-        element: <Login />,
-      },
-      {
-        path: '/logout',
-        element: <Logout />,
+        path: '/strategy',
+        children: [
+          {
+            path: 'add',
+            element: <AddStrategy />,
+          },
+          {
+            path: 'view',
+            element: <ViewStrategy />,
+          }
+        ]
       },
     ],
   },
@@ -41,12 +43,10 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <AuthProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </AuthProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <RouterProvider router={router} />
+    </ThemeProvider>
   );
 };
 
