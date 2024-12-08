@@ -7,6 +7,7 @@ import Layout from '../layout';
 import Home from '../home';
 import AddStrategy from '../strategies/add';
 import ViewStrategy from '../strategies/view';
+import Portfolio from '../portfolio';
 
 const theme = createTheme({
   palette: {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
           }
         ]
       },
+      {
+        path: 'portfolio',
+        element: <Portfolio />,
+      }
     ],
   },
 ]);
