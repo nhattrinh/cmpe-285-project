@@ -18,15 +18,18 @@ strategy_to_percentage = {
     "Value Investing": [0.4, 0.3, 0.3]
 }
 
+
 # Get list of stocks name by strategy name
 @strategies_router.get("/strategies/{strategy_name}")
 async def get_stocks_by_strategy(strategy_name: str):
     return strategy_to_stocks[strategy_name]
 
+
 # Get all strategies
 @strategies_router.get("/strategies")
 async def get_strategies():
     return list(strategy_to_stocks.keys())
+
 
 # Get percentage of each stock to buy by strategy name
 @strategies_router.get("/strategies/percentage/{strategy_name}")

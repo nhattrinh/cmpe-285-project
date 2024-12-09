@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box, Typography, Select,
   MenuItem, Button
@@ -6,18 +6,51 @@ import {
 
 import { Header } from "../../layout";
 
+import { addStrategy } from "../utils";
+import api from "../../api.config";
+
 const AddStrategy = () => {
+  const [strategies, setStrategies] = useState([]);
+  const [selectedStrategy, setSelectedStrategy] = useState("");
+  const [selectedStrategyStocks, setSelectedStrategyStocks] = useState([]);
+
+  useEffect(() => {
+    api.getStrategies()
+      .then((res) => {
+        setStrategies(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    api.getStrategyStocks(selectedStrategy)
+      .then((res) => {
+        setSelectedStrategyStocks(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [selectedStrategy]);
+
   const renderTypeSelect = () => {
-    return (
+    return strategies && strategies.length >= 0 && (
       <Box marginBottom={4}>
-        <Typography variant="subtitle1" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           Type
         </Typography>
         <Select
-          value="Ethical Investing"
+          value={selectedStrategy}
           fullWidth
         >
-          <MenuItem value="Ethical Investing">Ethical Investing</MenuItem>
+          {
+            strategies.map((strategy) => (
+              <MenuItem key={strategy} value={strategy}>
+                {strategy}
+              </MenuItem>
+            ))
+          }
         </Select>
       </Box>
     );
@@ -54,7 +87,14 @@ const AddStrategy = () => {
   const renderAddBtn = () => {
     return (
       <Box textAlign="left">
-        <Button variant="outlined" type="button" color="white">Add</Button>
+        <Button
+          variant="outlined"
+          type="button"
+          color="white"
+          onClick={() => addStrategy()}
+        >
+          Add
+        </Button>
       </Box>
     );
   };

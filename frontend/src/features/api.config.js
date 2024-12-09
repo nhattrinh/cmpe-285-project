@@ -13,5 +13,13 @@ const api = axios.create({
 });
 
 export default ({
-  
+  getStrategies: () => (
+    api.get("/strategies")
+  ),
+  getStrategyStocks: (strategyName) => (
+    api.get(`/strategies/${strategyName}`)
+  ),
+  getPercentageByStrategy: (strategyName) => (
+    api.get(`/strategies/percentage/${strategyName}`)
+  ),
 });
