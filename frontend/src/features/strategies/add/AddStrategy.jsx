@@ -27,7 +27,16 @@ const AddStrategy = () => {
   useEffect(() => {
     api.getStrategyStocks(selectedStrategy)
       .then((res) => {
-        setSelectedStrategyStocks(res.data);
+        const stockDetailsPromises = res.data.map((ticker) => {
+          return api.getStockDetails(ticker);
+        });
+        Promise.all(stockDetailsPromises)
+          .then((stockDetails) => {
+            setSelectedStrategyStocks(stockDetails.map((res) => res.data));
+          })
+          .catch((err) => {
+            console.error(err);
+          });
       })
       .catch((err) => {
         console.error(err);
@@ -43,6 +52,7 @@ const AddStrategy = () => {
         <Select
           value={selectedStrategy}
           fullWidth
+          onChange={({ target }) => setSelectedStrategy(target.value)}
         >
           {
             strategies.map((strategy) => (
@@ -62,24 +72,14 @@ const AddStrategy = () => {
         <Typography variant="h5" gutterBottom>
           Mapped Stocks
         </Typography>
-        <Box>
-          <Typography variant="body1">Apple (AAPL)</Typography>
-          <Typography variant="body2">
-            Apple is one of the leaders of hardware and chip manufacturing. Apple is headquartered in Cupertino, California.
-          </Typography>
-        </Box>
-        <Box>
-          <Typography variant="body1">Adobe (ADBE)</Typography>
-          <Typography variant="body2">
-            Adobe is the leader of the creative space for artists and designers alike. Adobe is headquartered in San Jose, California.
-          </Typography>
-        </Box>
-        <Box>
-          <Typography variant="body1">Nestlé (NSRGY)</Typography>
-          <Typography variant="body2">
-            Nestlé is a Swiss multinational food and drink processing conglomerate corporation headquartered in Vevey, Switzerland.
-          </Typography>
-        </Box>
+        {
+          selectedStrategyStocks.map((stock) => (
+            <Box key={stock.ticker}>
+              <Typography variant="body1">{stock.ticker}</Typography>
+              <Typography variant="body2">{stock.description}</Typography>
+            </Box>
+          ))
+        }
       </Box>
     );
   };

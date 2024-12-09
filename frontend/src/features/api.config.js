@@ -22,4 +22,7 @@ export default ({
   getPercentageByStrategy: (strategyName) => (
     api.get(`/strategies/percentage/${strategyName}`)
   ),
+  getStockDetails: (ticker) => (
+    api.get(`/stock/${ticker}/details`)
+  ),
 });
