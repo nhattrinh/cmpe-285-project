@@ -41,7 +41,6 @@ async def get_stock_details(ticker: str):
     """
     url = f"https://api.polygon.io/v3/reference/tickers/{ticker}"
     params = {"apiKey": Config.POLYGON_API_KEY}
-    
     response = requests.get(url, params=params)
    
     if response.status_code != 200:
@@ -105,7 +104,7 @@ async def get_timeframe(ticker: str,
                                     payload: dict = Body(...)):
     """
     Get stock details for a custom window based on parameters passed in the JSON body.
-    """
+    """   
     # Extract parameters from the JSON body
     multiplier = payload.get("multiplier", 1)
     timespan = payload.get("timespan", "day")

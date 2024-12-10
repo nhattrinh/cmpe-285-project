@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
   Box, Typography, Select,
-  MenuItem, Button
+  MenuItem, Button, Card,
+  CardContent, Grid2,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import { Header } from "../../layout";
 
@@ -10,37 +12,43 @@ import { addStrategy } from "../utils";
 import api from "../../api.config";
 
 const AddStrategy = () => {
+  const navigate = useNavigate();
   const [strategies, setStrategies] = useState([]);
   const [selectedStrategy, setSelectedStrategy] = useState("");
   const [selectedStrategyStocks, setSelectedStrategyStocks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [amountInvested, setAmountInvested] = useState(0);
 
   useEffect(() => {
+    setIsLoading(true);
     api.getStrategies()
       .then((res) => {
         setStrategies(res.data);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.error(err);
+        setIsLoading(false);
       });
   }, []);
 
   useEffect(() => {
-    api.getStrategyStocks(selectedStrategy)
-      .then((res) => {
-        const stockDetailsPromises = res.data.map((ticker) => {
-          return api.getStockDetails(ticker);
+    if (selectedStrategy) {
+      setIsLoading(true);
+      api.getStrategyStocks(selectedStrategy)
+        .then((res) => {
+          const stocks = [];
+          for (const ticker of res.data) {
+            stocks.push({ ticker, description: "" });
+          }
+          setSelectedStrategyStocks(stocks);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setIsLoading(false);
         });
-        Promise.all(stockDetailsPromises)
-          .then((stockDetails) => {
-            setSelectedStrategyStocks(stockDetails.map((res) => res.data));
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+      }
   }, [selectedStrategy]);
 
   const renderTypeSelect = () => {
@@ -67,19 +75,40 @@ const AddStrategy = () => {
   };
 
   const renderMappedStocks = () => {
-    return (
+    return selectedStrategy && (
       <Box marginBottom={4}>
         <Typography variant="h5" gutterBottom>
           Mapped Stocks
         </Typography>
         {
           selectedStrategyStocks.map((stock) => (
-            <Box key={stock.ticker}>
-              <Typography variant="body1">{stock.ticker}</Typography>
+            <Box
+              key={stock.ticker}
+              border="solid 0.5px grey"
+              borderRadius={2}
+              margin={"1em 0"}
+              padding={1}
+            >
+              <Typography variant="h6">{stock.ticker}</Typography>
               <Typography variant="body2">{stock.description}</Typography>
             </Box>
           ))
         }
+      </Box>
+    );
+  };
+
+  const renderAmountInvestedInput = () => {
+    return (
+      <Box marginBottom={4}>
+        <Typography variant="h5" gutterBottom>
+          Amount Invested
+        </Typography>
+        <input
+          type="number"
+          value={amountInvested}
+          onChange={({ target }) => setAmountInvested(target.value)}
+        />
       </Box>
     );
   };
@@ -91,7 +120,11 @@ const AddStrategy = () => {
           variant="outlined"
           type="button"
           color="white"
-          onClick={() => addStrategy()}
+          onClick={() => {
+              addStrategy(selectedStrategy, selectedStrategyStocks);
+              navigate("/strategy/view");
+            }
+          }
         >
           Add
         </Button>
@@ -100,7 +133,7 @@ const AddStrategy = () => {
   };
 
   return (
-    <Box>
+    <Box paddingBottom={4}>
       <Header title="Add Strategy" subtitle="Append stocks to your profile" />
       {renderTypeSelect()}
       {renderMappedStocks()}

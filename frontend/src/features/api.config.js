@@ -25,4 +25,10 @@ export default ({
   getStockDetails: (ticker) => (
     api.get(`/stock/${ticker}/details`)
   ),
+  getTimeFrame: (ticker, from_date, to_date) => (
+    api.get(
+      `/stock/${ticker}/timeframe`,
+      { from_date, to_date }
+    )
+  )
 });

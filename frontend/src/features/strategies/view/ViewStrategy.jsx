@@ -13,7 +13,8 @@ const ViewStrategy = () => {
   const [strategies, setStrategies] = useState(getStrategies());
 
   const handleDelete = (id) => {
-    setStrategies(strategies.filter(strategy => strategy.id !== id));
+    removeStrategy(id);
+    setStrategies(getStrategies());
   };
 
   const renderAddStrategyBtn = () => {
