@@ -18,11 +18,12 @@ const Portfolio = () => {
   const [stockToPrice, setStockToPrice] = useState({});
 
   useEffect(() => {
+    const { from, to } = getFromToDates();
     strategies.forEach((strategy) => {
       const { stocks } = strategy;
       stocks.forEach((stock) => {
-        const { from, to } = getFromToDates();
-        api.getTimeFrame(stock, from, to)
+        console.log({ stock })
+        api.getTimeFrame(stock.ticker, from, to)
           .then((res) => {
               stockToPrice[stock] = res.data;
               console.log({ res })

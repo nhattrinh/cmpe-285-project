@@ -99,7 +99,7 @@ async def get_previous_day_details(ticker: str):
 # Using the summarize_stock_data of the utils.py. 
 #  Sample Enpoints we need to enter is http://127.0.0.1:8000/api/stock/ADBE/details
 # ************************************************************************
-@api_router.get("/stock/{ticker}/customWindow")
+@api_router.post("/stock/{ticker}/customWindow")
 async def get_timeframe(ticker: str, 
                                     payload: dict = Body(...)):
     """
@@ -112,7 +112,8 @@ async def get_timeframe(ticker: str,
     to_date = payload.get("to", None)
     adjusted = payload.get("adjusted", True) 
     sort = payload.get("sort", "asc") 
-    limit = payload.get("limit", None)       
+    limit = payload.get("limit", None)
+    get_summary = payload.get("getSummary", False)    
 
     # Validate required parameters
     if not from_date or not to_date:
@@ -129,7 +130,6 @@ async def get_timeframe(ticker: str,
         "apiKey": Config.POLYGON_API_KEY
     }
 
-    
     params = {k: v for k, v in params.items() if v is not None}
 
     try:
@@ -138,10 +138,10 @@ async def get_timeframe(ticker: str,
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail=response.json())
 
-        response = summarize_stock_data(response.json())
-        print(response)
+        if get_summary:
+            response = summarize_stock_data(response.json())
+
         return response
 
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail=f"Request to Polygon API failed: {str(e)}")
-
