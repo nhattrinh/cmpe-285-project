@@ -1,37 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box, Typography, Button,
   Grid2 as Grid,
-} from '@mui/material';
+} from "@mui/material";
+import { Link } from "react-router-dom";
 
 import { Header } from "../../layout";
 
+import { removeStrategy, getStrategies } from '../utils';
+
 const ViewStrategy = () => {
-  const [strategies, setStrategies] = useState([
-    {
-      id: '2msz',
-      title: 'Ethical Investing Strategy',
-      body: 'Body text for whatever you\'d like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.'
-    },
-    {
-      id: 'dk2d',
-      title: 'Index Investing Strategy',
-      body: 'Body text for whatever you\'d like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.'
-    },
-    {
-      id: '92mx',
-      title: 'Value Investing Strategy',
-      body: 'Body text for whatever you\'d like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.'
-    }
-  ]);
+  const [strategies, setStrategies] = useState(getStrategies());
 
   const handleDelete = (id) => {
-    setStrategies(strategies.filter(strategy => strategy.id !== id));
+    removeStrategy(id);
+    setStrategies(getStrategies());
   };
 
   const renderAddStrategyBtn = () => {
     return (
-      <Button variant="outlined" color="white">Add Strategy</Button>
+      <Link to="/strategy/add">
+        <Button variant="outlined" color="white">
+          Add Strategy
+        </Button>
+      </Link>
     );
   };
 

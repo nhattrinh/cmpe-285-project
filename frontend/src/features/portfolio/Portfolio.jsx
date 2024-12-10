@@ -1,53 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box, Typography, Button,
   Select, MenuItem, FormControl,
   InputLabel, Grid2 as Grid
 } from '@mui/material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+
+import StrategiesStocksTab from "./StrategiesStocksTab";
+import StocksValueGraph from "./StocksValueGraph";
+
+import { getStrategies } from "../strategies/utils";
+import { getFromToDates } from "./utils";
+import api from "../api.config";
 
 const Portfolio = () => {
-  const [strategies, setStrategies] = useState([
-    {
-      id: '2msz',
-      title: 'Ethical Investing Strategy',
-      body: 'Body text for whatever you\'d like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.'
-    },
-    {
-      id: 'dk2d',
-      title: 'Index Investing Strategy',
-      body: 'Body text for whatever you\'d like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.'
-    },
-    {
-      id: '92mx',
-      title: 'Value Investing Strategy',
-      body: 'Body text for whatever you\'d like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.'
-    }
-  ]);
+  const [strategies, setStrategies] = useState(getStrategies());
+  const [timeframe, setTimeframe] = useState("5 Days");
+  const [stockToPrice, setStockToPrice] = useState({});
 
-  const [timeframe, setTimeframe] = useState('5 Days');
+  useEffect(() => {
+    strategies.forEach((strategy) => {
+      const { stocks } = strategy;
+      stocks.forEach((stock) => {
+        const { from, to } = getFromToDates();
+        api.getTimeFrame(stock, from, to)
+          .then((res) => {
+              stockToPrice[stock] = res.data;
+              console.log({ res })
+          })
+          .catch((err) => console.error(err));
+      });
+    });
+  }, []);
 
-  
-  const data = [
-    { name: 'Day 1', value: 100 },
-    { name: 'Day 2', value: 95 },
-    { name: 'Day 3', value: 90 },
-    { name: 'Day 4', value: 85 },
-    { name: 'Day 5', value: 80 },
-  ];
-
-  const renderGraph = () => {
-    return (
-      <LineChart width={600} height={400} data={data}>
-        <XAxis dataKey="name" />
-        <YAxis />
-        <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="value" stroke="#8884d8" />
-      </LineChart>
-    );
-  };
+  const renderGraph = () => <StocksValueGraph />;
 
   const handleTimeframeChange = (event) => {
     setTimeframe(event.target.value);
@@ -73,9 +58,6 @@ const Portfolio = () => {
                 variant="outlined"
               >
                 <MenuItem value="5 Days">5 Days</MenuItem>
-                <MenuItem value="1 Month">1 Month</MenuItem>
-                <MenuItem value="3 Months">3 Months</MenuItem>
-                <MenuItem value="1 Year">1 Year</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -84,32 +66,15 @@ const Portfolio = () => {
     );
   };
 
-  const renderStrategies = () => {
-    return (
-      <Box mt={2}>
-        {strategies.map(strategy => (
-          <Box
-            key={strategy.id}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={2}
-          >
-            <Box>
-              <Typography variant="subtitle1">{strategy.title} ({strategy.id})</Typography>
-              <Typography variant="body2">{strategy.body}</Typography>
-            </Box>
-          </Box>
-        ))}
-      </Box>
-    );
-  };
+  const renderStrategies = () => <StrategiesStocksTab />;
 
   return (
     <Box>
       {renderHeader()}
-      {renderGraph()}
-      {renderStrategies()}
+      <Box display="flex" alignItems="center" flexDirection="column">
+        {renderGraph()}
+        {renderStrategies()}
+      </Box>
     </Box>
   );
 };
