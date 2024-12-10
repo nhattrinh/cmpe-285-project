@@ -14,4 +14,6 @@ export const getFromToDates = () => {
     const formatDate = (date) => date.toISOString().split('T')[0];
     const from = formatDate(startDate);
     const to = formatDate(currentDate);
+
+    return { from, to };
 };

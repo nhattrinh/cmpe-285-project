@@ -18,10 +18,18 @@ const Portfolio = () => {
   const [stockToPrice, setStockToPrice] = useState({});
 
   useEffect(() => {
-    if (!stockToPrice) {
-      strategies.forEach((strategy) => {
-        api.getTimeFrame
-    }
+    strategies.forEach((strategy) => {
+      const { stocks } = strategy;
+      stocks.forEach((stock) => {
+        const { from, to } = getFromToDates();
+        api.getTimeFrame(stock, from, to)
+          .then((res) => {
+              stockToPrice[stock] = res.data;
+              console.log({ res })
+          })
+          .catch((err) => console.error(err));
+      });
+    });
   }, []);
 
   const renderGraph = () => <StocksValueGraph />;
