@@ -8,7 +8,7 @@ export const getFromToDates = () => {
 
     // Calculate the start date (5 days ago)
     const startDate = new Date();
-    startDate.setDate(currentDate.getDate() - 5);
+    startDate.setDate(currentDate.getDate() - 7);
 
     // Format the dates to YYYY-MM-DD
     const formatDate = (date) => date.toISOString().split('T')[0];

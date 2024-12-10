@@ -124,7 +124,7 @@ async def get_timeframe(ticker: str,
 
     # Add query parameters
     params = {
-        "adjusted": str(adjusted).lower(), 
+        "adjusted": str(adjusted).lower(),
         "sort": sort,
         "limit": limit,
         "apiKey": Config.POLYGON_API_KEY
@@ -135,13 +135,15 @@ async def get_timeframe(ticker: str,
     try:
 
         response = requests.get(url, params=params)
+        data = response.json()
+
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail=response.json())
 
         if get_summary:
             response = summarize_stock_data(response.json())
 
-        return response
+        return response.json()
 
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail=f"Request to Polygon API failed: {str(e)}")

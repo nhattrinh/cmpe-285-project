@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Box, Typography, Select,
-  MenuItem, Button, Card,
-  CardContent, Grid2,
+  MenuItem, Button, InputAdornment,
+  TextField, Alert, AlertTitle,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +17,10 @@ const AddStrategy = () => {
   const [selectedStrategy, setSelectedStrategy] = useState("");
   const [selectedStrategyStocks, setSelectedStrategyStocks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [amountInvested, setAmountInvested] = useState(0);
+  const [amountInvested, setAmountInvested] = useState(null);
+  const [amount, setAmount] = useState("");
+  const [inputIsErrored, setInputIsErrored] = useState(false);
+  const [stockToPercentage, setStockToPercentage] = useState({});
 
   useEffect(() => {
     setIsLoading(true);
@@ -42,7 +45,19 @@ const AddStrategy = () => {
             stocks.push({ ticker, description: "" });
           }
           setSelectedStrategyStocks(stocks);
-          setIsLoading(false);
+          api.getPercentageByStrategy(selectedStrategy)
+            .then((res) => {
+              let finalStockToPercentage = {};
+              stocks.forEach((stock, index) => {
+                finalStockToPercentage = {
+                  ...finalStockToPercentage,
+                  [stock.ticker]: res.data[index],
+                };
+              });
+              setStockToPercentage(finalStockToPercentage);
+              setIsLoading(false);
+            })
+            .catch((err) => console.error(err));
         })
         .catch((err) => {
           console.error(err);
@@ -54,7 +69,7 @@ const AddStrategy = () => {
   const renderTypeSelect = () => {
     return strategies && strategies.length >= 0 && (
       <Box marginBottom={4}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h6" gutterBottom>
           Type
         </Typography>
         <Select
@@ -77,20 +92,30 @@ const AddStrategy = () => {
   const renderMappedStocks = () => {
     return selectedStrategy && (
       <Box marginBottom={4}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h6" gutterBottom>
           Mapped Stocks
         </Typography>
         {
           selectedStrategyStocks.map((stock) => (
             <Box
               key={stock.ticker}
-              border="solid 0.5px grey"
-              borderRadius={2}
+              border="solid 0.5px lightgray"
+              borderRadius={1}
               margin={"1em 0"}
               padding={1}
             >
-              <Typography variant="h6">{stock.ticker}</Typography>
-              <Typography variant="body2">{stock.description}</Typography>
+              <Typography variant="subtitle1">
+                {stock.ticker}
+              </Typography>
+              <Typography variant="body2">
+                {stock.description}
+              </Typography>
+              <Typography variant="body2">
+                ${stockToPercentage[stock.ticker] * amountInvested} invested.
+              </Typography>
+              <Typography variant="body2">
+                {stockToPercentage[stock.ticker] * 100}% of portfolio.
+              </Typography>
             </Box>
           ))
         }
@@ -99,18 +124,50 @@ const AddStrategy = () => {
   };
 
   const renderAmountInvestedInput = () => {
+    const handleChange = (event) => {
+      const value = event.target.value;
+      // Validate input to allow only numbers
+      if (!isNaN(value) && value >= 0) {
+        setAmountInvested(value);
+      }
+    };
+
     return (
       <Box marginBottom={4}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h6" gutterBottom>
           Amount Invested
         </Typography>
-        <input
-          type="number"
+        <TextField
+          variant="outlined"
+          fullWidth
           value={amountInvested}
-          onChange={({ target }) => setAmountInvested(target.value)}
+          onChange={handleChange}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+          type="number"
+          inputProps={{
+            min: 0,
+            step: "50", // Allows decimals
+          }}
         />
       </Box>
     );
+  };
+
+  const handleAddClick = () => {
+    if (!amountInvested || !selectedStrategy) {
+      setInputIsErrored(true);
+      return;
+    }
+
+    addStrategy(
+      selectedStrategy,
+      selectedStrategyStocks,
+      parseInt(amountInvested),
+      stockToPercentage,
+    );
+    navigate("/strategy/view");
   };
 
   const renderAddBtn = () => {
@@ -120,11 +177,7 @@ const AddStrategy = () => {
           variant="outlined"
           type="button"
           color="white"
-          onClick={() => {
-              addStrategy(selectedStrategy, selectedStrategyStocks);
-              navigate("/strategy/view");
-            }
-          }
+          onClick={handleAddClick}
         >
           Add
         </Button>
@@ -132,9 +185,20 @@ const AddStrategy = () => {
     );
   };
 
+  const renderInputErrorBanner = () => {
+    return inputIsErrored && (
+      <Alert severity="error" sx={{ mb: 2 }}>
+        <AlertTitle>Error</AlertTitle>
+        Please fill out all inputs before continuing.
+      </Alert>
+    );
+  };
+
   return (
     <Box paddingBottom={4}>
       <Header title="Add Strategy" subtitle="Append stocks to your profile" />
+      {renderInputErrorBanner()}
+      {renderAmountInvestedInput()}
       {renderTypeSelect()}
       {renderMappedStocks()}
       {renderAddBtn()}

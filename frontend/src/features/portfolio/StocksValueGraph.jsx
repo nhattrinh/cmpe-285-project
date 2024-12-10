@@ -5,14 +5,21 @@ import {
   Legend,
 } from "recharts";
 
-const StocksValueGraph = () => {
-  const data = [
-    { name: 'Day 1', value: 100 },
-    { name: 'Day 2', value: 95 },
-    { name: 'Day 3', value: 90 },
-    { name: 'Day 4', value: 85 },
-    { name: 'Day 5', value: 80 },
-  ];
+const StocksValueGraph = ({ portfolioValuesArr }) => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const finalData = [];
+    // Set the name as current day's full date and value as the portfolio value
+    portfolioValuesArr.forEach((value, index) => {
+      const finalValue = value.toFixed(2);
+      const date = new Date();
+      date.setDate(date.getDate() - (portfolioValuesArr.length - index - 1));
+      const name = date.toDateString().split(" ").slice(1, 3).join(" ");
+      finalData.push({ name, value: finalValue });
+    });
+    setData(finalData);
+  }, [portfolioValuesArr]);
 
   const [chartWidth, setChartWidth] = useState(
     window.innerWidth > 1104.05 ? 1104.05 : window.innerWidth
@@ -27,7 +34,7 @@ const StocksValueGraph = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return (
+  return data && data.length > 0 && (
     <LineChart width={chartWidth} height={400} data={data}>
       <XAxis dataKey="name" />
       <YAxis />

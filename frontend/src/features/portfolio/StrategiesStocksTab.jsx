@@ -33,9 +33,11 @@ const TabPanel = (props) => {
 }
 
 // Vertical Tabs Component
-const DynamicVerticalTabs = () => {
+const DynamicVerticalTabs = ({
+  stockToPrice, stockToSharesPurchased
+}) => {
   const [value, setValue] = useState(0);
-  const [strategies, setStrategies] = useState(getStrategies());
+  const [strategies, _] = useState(getStrategies());
 
 
   const handleChange = (event, newValue) => {
@@ -69,15 +71,50 @@ const DynamicVerticalTabs = () => {
 
   const renderTabPanel = () => {
     return strategies && strategies.length >= 0 && (
-      strategies.map((strategy, index) => (
-        <TabPanel key={index} value={value} index={index}>
-          {strategy.stocks.map((stock, index) => (
-            <Typography key={index} variant="body1">
-              {stock.ticker} - {stock.description}
+      strategies.map((strategy, index) => {
+        return (
+          <TabPanel key={index} value={value} index={index}>
+            <Typography variant="h5">
+              ${strategy.amountInvested} invested.
             </Typography>
-          ))}
-        </TabPanel>
-      ))
+            {strategy.stocks.map((stock, index) => (
+              <Box
+                key={stock.ticker}
+                border="solid 0.5px lightgray"
+                borderRadius={1}
+                margin={"1em 0"}
+                padding={1}
+              >
+                <Typography key={index} variant="h6">
+                  {stock.ticker}
+                </Typography>
+                <Box>
+                  {
+                    stockToPrice
+                    && Object.keys(stockToPrice).length > 0
+                    && stockToPrice[stock.ticker]
+                    && (
+                      <Typography variant="body1">
+                        ${stockToPrice[stock.ticker][stockToPrice[stock.ticker].length - 1]} currently.
+                      </Typography>
+                    )
+                  }
+                  {
+                    stockToPrice
+                    && Object.keys(stockToPrice).length > 0
+                    && stockToPrice[stock.ticker]
+                    && (
+                      <Typography variant="body1">
+                        {stockToSharesPurchased[stock.ticker].toFixed(2)} shares purchased.
+                      </Typography>
+                    )
+                  }
+                </Box>
+              </Box>
+            ))}
+          </TabPanel>
+        );
+      })
     );
   };
 

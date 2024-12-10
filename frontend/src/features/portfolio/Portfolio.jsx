@@ -16,24 +16,44 @@ const Portfolio = () => {
   const [strategies, setStrategies] = useState(getStrategies());
   const [timeframe, setTimeframe] = useState("5 Days");
   const [stockToPrice, setStockToPrice] = useState({});
+  const [stockToSharesPurchased , setStockToSharesPurchased] = useState({});
+  const [portfolioValueArr, setPortfolioValueArr] = useState([]);
 
   useEffect(() => {
     const { from, to } = getFromToDates();
+    let finalStockToPrice = {...stockToPrice};
+    let finalStockToSharesPurchased = {...stockToSharesPurchased};
+    let finalPortfolioValueArr = [0, 0, 0, 0, 0];
+
     strategies.forEach((strategy) => {
-      const { stocks } = strategy;
-      stocks.forEach((stock) => {
-        console.log({ stock })
-        api.getTimeFrame(stock.ticker, from, to)
-          .then((res) => {
-              stockToPrice[stock] = res.data;
-              console.log({ res })
-          })
-          .catch((err) => console.error(err));
+      const {
+        stocks, amountInvested, stockToPercentage,
+      } = strategy;
+      stocks.forEach(async(stock) => {
+        try {
+          const response = await api.getTimeFrame(stock.ticker, from, to)
+          const { results } = response.data;
+          // Get the closing prices for the past 5 days
+          const pastFiveDays = results.map((result) => result.c);
+          finalStockToPrice[stock.ticker] = pastFiveDays;
+          // Calculate the amount of shares purchased
+          finalStockToSharesPurchased[stock.ticker] = amountInvested * stockToPercentage[stock.ticker] / pastFiveDays[pastFiveDays.length - 1];
+
+          // Calculate portfolio value for each day
+          for (let i = 0; i < pastFiveDays.length; i++) {
+            finalPortfolioValueArr[i] += pastFiveDays[i] * finalStockToSharesPurchased[stock.ticker];
+          }
+        } catch(err) {
+          console.error(err);
+        }
       });
     });
+    setPortfolioValueArr(finalPortfolioValueArr);
+    setStockToPrice(finalStockToPrice);
+    setStockToSharesPurchased(finalStockToSharesPurchased);
   }, []);
 
-  const renderGraph = () => <StocksValueGraph />;
+  const renderGraph = () => <StocksValueGraph portfolioValuesArr={portfolioValueArr} />;
 
   const handleTimeframeChange = (event) => {
     setTimeframe(event.target.value);
@@ -67,7 +87,12 @@ const Portfolio = () => {
     );
   };
 
-  const renderStrategies = () => <StrategiesStocksTab />;
+  const renderStrategies = () => (
+    <StrategiesStocksTab
+      stockToPrice={stockToPrice}
+      stockToSharesPurchased={stockToSharesPurchased}
+    />
+  );
 
   return (
     <Box>
