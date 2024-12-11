@@ -6,13 +6,19 @@
  * @param {Array} stocksArr - Array of stock symbols
  * belonging to the strategy (e.g. ["AAPL", "GOOGL", "TSLA"])
  */
-export const addStrategy = (strategyName, stocksArr) => {
+export const addStrategy = (
+  strategyName, stocksArr, amountInvested,
+  stockToPercentage,
+) => {
   const strategies = JSON.parse(localStorage.getItem('strategies')) || [];
   const id = Math.random().toString(36).substr(2, 4);
+  
   strategies.push({
     id,
     title: strategyName,
-    stocks: stocksArr
+    stocks: stocksArr,
+    amountInvested,
+    stockToPercentage,
   });
   localStorage.setItem('strategies', JSON.stringify(strategies));
 };

@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { LinearProgress } from "@mui/material";
 import {
   LineChart, Line, XAxis,
   YAxis, CartesianGrid, Tooltip,
   Legend,
 } from "recharts";
 
-const StocksValueGraph = () => {
-  const data = [
-    { name: 'Day 1', value: 100 },
-    { name: 'Day 2', value: 95 },
-    { name: 'Day 3', value: 90 },
-    { name: 'Day 4', value: 85 },
-    { name: 'Day 5', value: 80 },
-  ];
+const StocksValueGraph = ({ graphData }) => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    setData([...graphData]);
+    }, [graphData]);
 
   const [chartWidth, setChartWidth] = useState(
     window.innerWidth > 1104.05 ? 1104.05 : window.innerWidth

@@ -8,9 +8,7 @@ const Layout = () => {
   return (
     <>
       <Navbar title="Stocks Recommendation Engine" />
-      <Container sx={{ paddingTop: '5em' }}>
-        <Outlet />
-      </Container>
+      <Outlet />
     </>
   );
 };
