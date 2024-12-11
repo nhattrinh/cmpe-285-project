@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Box, Typography, Button,
-  Grid2 as Grid,
+  Grid2 as Grid, Container,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -70,10 +70,24 @@ const ViewStrategy = () => {
   };
 
   return (
-    <Box>
+    <Container>
       {renderHeader()}
-      {renderStrategies()}
-    </Box>
+      {
+        strategies && strategies.length > 0 ? (
+          renderStrategies()
+        ) : (
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            height="50vh"
+          >
+            <h1>No strategies found!</h1>
+          </Box>
+        )
+      }
+    </Container>
   );
 };
 

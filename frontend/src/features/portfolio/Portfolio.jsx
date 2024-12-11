@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Typography, Button,
+  Box, Typography, Container,
   Select, MenuItem, FormControl,
   InputLabel, Grid2 as Grid
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 import StrategiesStocksTab from "./StrategiesStocksTab";
 import StocksValueGraph from "./StocksValueGraph";
@@ -94,14 +95,32 @@ const Portfolio = () => {
     />
   );
 
+  if (strategies && strategies.length > 0) {
+    return (
+      <Container>
+        {renderHeader()}
+        <Box display="flex" alignItems="center" flexDirection="column">
+          {renderGraph()}
+          {renderStrategies()}
+        </Box>
+      </Container>
+    );
+  }
+
   return (
-    <Box>
-      {renderHeader()}
-      <Box display="flex" alignItems="center" flexDirection="column">
-        {renderGraph()}
-        {renderStrategies()}
+    <Container>
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        height="50vh"
+      >
+        <h1>No strategies found!</h1>
+        <br />
+        <Link to="/strategy/add"><h3>Add a strategy now!</h3></Link>
       </Box>
-    </Box>
+    </Container>
   );
 };
 

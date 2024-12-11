@@ -3,6 +3,7 @@ import {
   Box, Typography, Select,
   MenuItem, Button, InputAdornment,
   TextField, Alert, AlertTitle,
+  Container,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -195,14 +196,14 @@ const AddStrategy = () => {
   };
 
   return (
-    <Box paddingBottom={4}>
+    <Container sx={{ paddingBottom: 4 }}>
       <Header title="Add Strategy" subtitle="Append stocks to your profile" />
       {renderInputErrorBanner()}
       {renderAmountInvestedInput()}
       {renderTypeSelect()}
       {renderMappedStocks()}
       {renderAddBtn()}
-    </Box>
+    </Container>
   );
 };
 
