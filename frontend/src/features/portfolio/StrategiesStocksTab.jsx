@@ -39,7 +39,6 @@ const DynamicVerticalTabs = ({
   const [value, setValue] = useState(0);
   const [strategies, _] = useState(getStrategies());
 
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -54,7 +53,7 @@ const DynamicVerticalTabs = ({
         sx={{ 
           borderRight: 1, 
           borderColor: 'divider', 
-          width: "auto"
+          width: "auto",
         }}
       >
         {strategies.map((strategy, index) => (

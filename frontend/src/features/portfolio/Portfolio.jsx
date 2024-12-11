@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Typography, Container,
   Select, MenuItem, FormControl,
-  InputLabel, Grid2 as Grid
+  InputLabel, Grid2 as Grid,
+  LinearProgress
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 
@@ -18,43 +19,67 @@ const Portfolio = () => {
   const [timeframe, setTimeframe] = useState("5 Days");
   const [stockToPrice, setStockToPrice] = useState({});
   const [stockToSharesPurchased , setStockToSharesPurchased] = useState({});
-  const [portfolioValueArr, setPortfolioValueArr] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [graphData, setGraphData] = useState([]);
 
   useEffect(() => {
     const { from, to } = getFromToDates();
     let finalStockToPrice = {...stockToPrice};
     let finalStockToSharesPurchased = {...stockToSharesPurchased};
     let finalPortfolioValueArr = [0, 0, 0, 0, 0];
+    setIsLoading(true);
 
-    strategies.forEach((strategy) => {
-      const {
-        stocks, amountInvested, stockToPercentage,
-      } = strategy;
-      stocks.forEach(async(stock) => {
-        try {
-          const response = await api.getTimeFrame(stock.ticker, from, to)
-          const { results } = response.data;
-          // Get the closing prices for the past 5 days
-          const pastFiveDays = results.map((result) => result.c);
-          finalStockToPrice[stock.ticker] = pastFiveDays;
-          // Calculate the amount of shares purchased
-          finalStockToSharesPurchased[stock.ticker] = amountInvested * stockToPercentage[stock.ticker] / pastFiveDays[pastFiveDays.length - 1];
+    const getPortfolioData = async () => {
+      for (const strategy of strategies) {
+        const {
+          stocks, amountInvested, stockToPercentage,
+        } = strategy;
 
-          // Calculate portfolio value for each day
-          for (let i = 0; i < pastFiveDays.length; i++) {
-            finalPortfolioValueArr[i] += pastFiveDays[i] * finalStockToSharesPurchased[stock.ticker];
+        for (const stock of stocks) {
+          try {
+            const response = await api.getTimeFrame(stock.ticker, from, to)
+            const { results } = response.data;
+            // Get the closing prices for the past 5 days
+            const pastFiveDays = results.map((result) => result.c);
+            finalStockToPrice[stock.ticker] = pastFiveDays;
+            // Calculate the amount of shares purchased
+            finalStockToSharesPurchased[stock.ticker] = amountInvested * stockToPercentage[stock.ticker] / pastFiveDays[pastFiveDays.length - 1];
+
+            // Calculate portfolio value for each day
+            for (let i = 0; i < pastFiveDays.length; i++) {
+              finalPortfolioValueArr[i] += pastFiveDays[i] * finalStockToSharesPurchased[stock.ticker];
+            }
+          } catch(err) {
+            console.error(err);
           }
-        } catch(err) {
-          console.error(err);
         }
+      }
+
+      // Process graph data
+      const finalData = [];
+      // Set the name as current day's full date and value as the portfolio value
+      finalPortfolioValueArr.forEach((value, index) => {
+        const finalValue = value.toFixed(2);
+        const date = new Date();
+        date.setDate(date.getDate() - (finalPortfolioValueArr.length - index - 1));
+        const name = date.toDateString().split(" ").slice(1, 3).join(" ");
+        finalData.push({ name, value: parseFloat(finalValue) });
       });
-    });
-    setPortfolioValueArr(finalPortfolioValueArr);
-    setStockToPrice(finalStockToPrice);
-    setStockToSharesPurchased(finalStockToSharesPurchased);
+
+      setGraphData(finalData);
+      setStockToPrice(finalStockToPrice);
+      setStockToSharesPurchased(finalStockToSharesPurchased);
+      setIsLoading(false);
+    }
+
+    getPortfolioData();
   }, []);
 
-  const renderGraph = () => <StocksValueGraph portfolioValuesArr={portfolioValueArr} />;
+  const renderGraph = () => graphData && graphData.length > 0 && (
+    <StocksValueGraph
+      graphData={graphData}
+    />
+  );
 
   const handleTimeframeChange = (event) => {
     setTimeframe(event.target.value);
@@ -94,6 +119,27 @@ const Portfolio = () => {
       stockToSharesPurchased={stockToSharesPurchased}
     />
   );
+
+  if (isLoading) {
+    return (
+      <div
+      style={{
+        width: '100vw',
+        height: '50em',
+        marginBottom: '4em',
+      }}
+      >
+        <LinearProgress
+          sx={{
+            backgroundColor: 'lightgray', // Background color of the bar
+            '& .MuiLinearProgress-bar': {
+              backgroundColor: 'black', // Color of the progress bar
+            },
+          }}
+        />
+      </div>
+    );
+  }
 
   if (strategies && strategies.length > 0) {
     return (

@@ -1,25 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { LinearProgress } from "@mui/material";
 import {
   LineChart, Line, XAxis,
   YAxis, CartesianGrid, Tooltip,
   Legend,
 } from "recharts";
 
-const StocksValueGraph = ({ portfolioValuesArr }) => {
+const StocksValueGraph = ({ graphData }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const finalData = [];
-    // Set the name as current day's full date and value as the portfolio value
-    portfolioValuesArr.forEach((value, index) => {
-      const finalValue = value.toFixed(2);
-      const date = new Date();
-      date.setDate(date.getDate() - (portfolioValuesArr.length - index - 1));
-      const name = date.toDateString().split(" ").slice(1, 3).join(" ");
-      finalData.push({ name, value: finalValue });
-    });
-    setData(finalData);
-  }, [portfolioValuesArr]);
+    setData([...graphData]);
+    }, [graphData]);
 
   const [chartWidth, setChartWidth] = useState(
     window.innerWidth > 1104.05 ? 1104.05 : window.innerWidth
@@ -34,7 +26,7 @@ const StocksValueGraph = ({ portfolioValuesArr }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return data && data.length > 0 && (
+  return (
     <LineChart width={chartWidth} height={400} data={data}>
       <XAxis dataKey="name" />
       <YAxis />
