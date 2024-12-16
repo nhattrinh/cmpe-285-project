@@ -110,7 +110,10 @@ const DynamicVerticalTabs = ({
                   }
                 </Box>
               </Box>
-            ))}
+            ))
+            
+            
+            }
           </TabPanel>
         );
       })
