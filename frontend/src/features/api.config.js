@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const DEV_BASE_URL = "http://localhost:8000/api";
-const PROD_BASE_URL = "http://localhost:8000/api";
+const PROD_BASE_URL = "http://52.90.228.157:8000/api";
 
 const BASE_URL = process.env.NODE_ENV === "development" ? DEV_BASE_URL : PROD_BASE_URL;
 
