@@ -97,11 +97,13 @@ useEffect(() => {
           onChange={({ target }) => setSelectedStrategy(target.value)}
         >
           {
-            strategies.map((strategy) => (
-              <MenuItem key={strategy} value={strategy}>
-                {strategy}
-              </MenuItem>
-            ))
+            strategies && strategies.length > 0 && (
+              strategies.map((strategy) => (
+                <MenuItem key={strategy} value={strategy}>
+                  {strategy}
+                </MenuItem>
+              ))
+            )
           }
         </Select>
       </Box>
@@ -115,7 +117,8 @@ useEffect(() => {
           Mapped Stocks
         </Typography>
         {
-          selectedStrategyStocks.map((stock) => (
+          selectedStrategyStocks && selectedStrategyStocks.length > 0 && (
+            selectedStrategyStocks.map((stock) => (
             <Box
               key={stock.ticker}
               border="solid 0.5px lightgray"
@@ -137,7 +140,7 @@ useEffect(() => {
               </Typography>
             </Box>
           ))
-        }
+        )}
       </Box>
     );
   };
