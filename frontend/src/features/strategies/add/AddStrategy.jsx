@@ -28,7 +28,6 @@ const AddStrategy = () => {
     api.getStrategies()
       .then((res) => {
         setStrategies(res.data);
-        console.log(res.data);
         setIsLoading(false);
       })
       .catch((err) => {
