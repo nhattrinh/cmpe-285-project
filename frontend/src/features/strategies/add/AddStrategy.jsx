@@ -11,7 +11,7 @@ import { Header } from "../../layout";
 
 import { addStrategy } from "../utils";
 import api from "../../api.config";
-
+import News from "../../../Hooks/News";
 const AddStrategy = () => {
   const navigate = useNavigate();
   const [strategies, setStrategies] = useState([]);
@@ -22,6 +22,8 @@ const AddStrategy = () => {
   const [amount, setAmount] = useState("");
   const [inputIsErrored, setInputIsErrored] = useState(false);
   const [stockToPercentage, setStockToPercentage] = useState({});
+
+  const [news, setNews] = useState(null)
 
   useEffect(() => {
     setIsLoading(true);
@@ -35,6 +37,22 @@ const AddStrategy = () => {
         setIsLoading(false);
       });
   }, []);
+
+  // Getting the news 
+ // Getting the news
+useEffect(() => {
+  setIsLoading(true);
+  News() // Assuming fetchNews is the function fetching the news
+    .then((res) => {
+      console.log(res); // Use 'res' instead of 'news', assuming this is the response
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.error(err);
+      setIsLoading(false);
+    });
+}, []);
+
 
   useEffect(() => {
     if (selectedStrategy) {

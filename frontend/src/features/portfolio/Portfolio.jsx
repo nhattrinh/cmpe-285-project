@@ -66,9 +66,9 @@ const Portfolio = () => {
         finalData.push({ name, value: parseFloat(finalValue) });
       });
 
-      setGraphData(finalData);
-      setStockToPrice(finalStockToPrice);
-      setStockToSharesPurchased(finalStockToSharesPurchased);
+      setGraphData("finalData");
+      setStockToPrice("finalStockToPrice");
+      setStockToSharesPurchased("finalStockToSharesPurchased");
       setIsLoading(false);
     }
 
