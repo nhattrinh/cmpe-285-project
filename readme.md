@@ -37,11 +37,8 @@ The **Stock Portfolio Suggestion Engine** is a Python-based application designed
 - **Python**: Core language for the engine.  
 - **APIs**: Fetch live stock data (e.g., Yahoo Finance API, Alpha Vantage).  
 - **Libraries**:  
-  - Pandas: For data manipulation.  
-  - Matplotlib/Plotly: For visualization.  
-  - Requests: For fetching live data.  
-  - Numpy: For calculations.  
-  - Flask/Streamlit: For building the UI.  
+  - Requests: For fetching live data.
+  - FastAPI: for sending the api requests and process frontend requests.
 
 ---
 
@@ -71,10 +68,66 @@ The **Stock Portfolio Suggestion Engine** is a Python-based application designed
 
 ---
 
-## 🖥️ Setup Instructions  
+## 🖥️ Setup Instructions
 
-### **Prerequisites**  
-- Python 3.8+  
-- Install required libraries:  
-  ```bash
-  pip install pandas matplotlib requests flask alpha_vantage
+### Prerequisites
+- Python 3.9+
+- Node.js 16+ and npm
+- Polygon.io API Key
+- Git
+
+### Backend Setup (FastAPI)
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/yourusername/stock-portfolio-suggestion-engine.git
+   cd stock-portfolio-suggestion-engine/backend
+   ```
+
+2. **Create Virtual Environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+
+3. **Install Python Dependencies**
+   ```bash
+   pip install fastapi uvicorn python-dotenv
+   ```
+
+4. **Configure Environment Variables**
+   Create a `.env` file in the backend directory in the Backend/app/ directory:
+   ```
+   POLYGON_API_KEY=your_polygon_api_key_here
+   ```
+
+5. **Run the FastAPI Server**
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+### Frontend Setup (React)
+1. **Navigate to Frontend Directory**
+   ```bash
+   cd ../frontend
+   ```
+
+2. **Install Node Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Install Additional Packages**
+   ```bash
+   npm install axios recharts react-router-dom @mui/material @emotion/react
+   ```
+
+4. **Run the React Development Server**
+   ```bash
+   npm start
+   ```
+
+### Recommended Development Tools
+- Backend: VSCode with Python extension
+- Frontend: VSCode with ES7+ React extension
+- Postman for API testing
+- Docker Desktop for containerization
