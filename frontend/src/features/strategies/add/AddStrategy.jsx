@@ -79,11 +79,13 @@ const AddStrategy = () => {
           onChange={({ target }) => setSelectedStrategy(target.value)}
         >
           {
-            strategies.map((strategy) => (
-              <MenuItem key={strategy} value={strategy}>
-                {strategy}
-              </MenuItem>
-            ))
+            strategies && strategies.length > 0 && (
+              strategies.map((strategy) => (
+                <MenuItem key={strategy} value={strategy}>
+                  {strategy}
+                </MenuItem>
+              ))
+            )
           }
         </Select>
       </Box>
