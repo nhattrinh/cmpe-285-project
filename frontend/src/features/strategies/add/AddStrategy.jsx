@@ -97,7 +97,8 @@ const AddStrategy = () => {
           Mapped Stocks
         </Typography>
         {
-          selectedStrategyStocks.map((stock) => (
+          selectedStrategyStocks && selectedStrategyStocks.length > 0 && (
+            selectedStrategyStocks.map((stock) => (
             <Box
               key={stock.ticker}
               border="solid 0.5px lightgray"
@@ -119,7 +120,7 @@ const AddStrategy = () => {
               </Typography>
             </Box>
           ))
-        }
+        )}
       </Box>
     );
   };
