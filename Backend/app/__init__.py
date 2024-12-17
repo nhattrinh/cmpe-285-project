@@ -8,15 +8,13 @@ from .routes.strategies import strategies_router
 
 
 class CreateApp:
-    # List of origins that are allowed to make cross-origin requests
-    origins = ["http://localhost:3000"]
 
     def __init__(self):
         self.app = FastAPI(title="My FastAPI Application")
         # Add CORS middleware
         self.app.add_middleware(
             CORSMiddleware,
-            allow_origins=self.origins,
+            allow_origins=["*"],
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],
